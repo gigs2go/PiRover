@@ -1,0 +1,167 @@
+# Installation instructions .........
+# Create SD card from image
+# Create 'ssh'
+# Create 'wpa_supplicant.conf'
+# Add
+country=GB
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+network={
+       ssid="TALKTALKABE6CC"
+       psk="WRFFU7DN"
+       key_mgmt=WPA-PSK
+    }
+	
+# Boot from SDCard. IP address will be provided by the Router configured above
+# Find the IP address (via the router)
+# Login via ssh : 
+ssh pi@xxx.xxx.xxx.xxx
+# password is raspberry
+
+# Then ..
+sudo bash
+apt-get update
+apt-get upgrade
+# NB Do NOT use 'apt-get dist-upgrade'
+
+# Initial config
+raspi-config
+# Change password and enable camera & i2c
+
+# Install UV4L
+curl http://www.linux-projects.org/listing/uv4l_repo/lpkey.asc | apt-key add -
+echo 'deb http://www.linux-projects.org/listing/uv4l_repo/raspbian/stretch stretch main' > /etc/apt/sources.list.d/uv4l.list
+
+apt-get update
+
+apt-get -y install uv4l uv4l-raspicam
+apt-get -y install uv4l-server
+apt-get -y install uv4l-webrtc-armv6
+# Installs and starts service - run last
+apt-get -y install uv4l-raspicam-extras
+systemctl status uv4l_raspicam
+# Stop uv4l
+systemctl stop uv4l_raspicam
+
+# edit /etc/uv4l/uv4l-raspicam.conf
+encoding = h264
+width = 320
+height = 240
+vflip = yes
+hflip = yes
+server-option = --port=8099
+server-option = --user-password=Rover123
+server-option = --admin-password=Rover123
+server-option = --config-password=Rover123
+
+# Restart uv4l
+systemctl start uv4l_raspicam
+
+# Check that UV4L is running correctly
+# http://xxx.xxx.xxx.xxx:8099
+
+# Install Java (and any other required packages)
+apt-get -y install openjdk-8-jre
+java -version
+apt-get -y install -y i2c-tools
+i2cdetect -y 1
+apt-get -y install wiringpi
+...
+
+#
+# Set up as DHCP server with static IP
+# After this, the Pi will no longer be connected to the internet via the Router
+# Access point install
+apt-get -y install hostapd
+apt-get -y install dnsmasq
+systemctl stop hostapd
+systemctl stop dnsmasq
+
+# Edit /etc/dhcpcd.conf
+# Add at end
+interface wlan0
+static ip_address=192.168.1.1/24
+static routers=192.168.1.1
+static domain_name_servers=192.168.1.1
+nohook wpa_supplicant
+denyinterfaces wlan0 
+
+# Create new /etc/dnsmasq.conf
+mv /etc/dnsmasq.conf /etc/dnsmasq.conf.orig
+# Add
+interface=wlan0
+  dhcp-range=192.168.1.2,192.168.1.10,255.255.255.0,24h
+
+# Create /etc/hostapd/hostapd.conf
+# Example (with loads of docs) zcat /usr/share/doc/hostapd/examples/hostapd.conf.gz
+# Set
+interface=wlan0
+ssid=PiRover
+channel=4
+hw_mode=g
+country_code=GB
+ignore_broadcast_ssid=0
+wpa=2
+wpa_key_mgmt=WPA-PSK
+wpa_passphrase=Rover123
+wpa_pairwise=TKIP
+rsn_pairwise=CCMP
+
+# Edit /etc/default/hostapd
+# Modify (uncomment and fix)
+DAEMON_CONF="/etc/hostapd/hostapd.conf"
+
+# Enable startup
+systemctl unmask hostapd
+systemctl enable hostapd
+systemctl unmask dnsmasq
+systemctl enable dnsmasq
+
+# Reboot
+
+# Connect directly to the WiFi configured above
+# Login as before, but using the configured IP address
+
+# Finally, the application ...
+
+# Copy the webapp jar to pi home directory
+
+# Set up the PiRover service
+# Modify the pirover.service to suit
+# Copy pirover.service to /etc/systemd/system/pirover.service
+
+# Run systemctl daemon-reload
+# Start the service
+systemctl start pirover
+# Watch it start - it's slow
+journalctl -f # This is the equivalent of 'tail -f' of the log file ... it will also show system messages
+
+# Optional ...
+# Mod the logging configuration
+# Lines below cause all logging to be in-memory only
+# Supporting (log) files in /run/log/journal/
+# Edit /etc/systemd/journald.conf
+# Replace following lines (modify as required)
+Storage=volatile
+RuntimeMaxUse=20M
+RuntimeMaxFileSize=1M
+RuntimeMaxFiles=9
+
+# Re-read logging config
+systemctl restart systemd-journald
+# Check settings
+journalctl -u systemd-journald
+
+
+
+
+
+
+
+
+
+
+
+
+
+
