@@ -67,12 +67,24 @@ public class PCA9685 implements DeviceProvider {
     
     private static GpioPinPwmOutput[] provisionPwmOutputs( final PCA9685GpioProvider gpioProvider ) {
         GpioController gpio = GpioFactory.getInstance();
-        GpioPinPwmOutput myOutputs[] = { gpio.provisionPwmOutputPin( gpioProvider, PCA9685Pin.PWM_00, "Motor1 PWM" ), gpio.provisionPwmOutputPin( gpioProvider, PCA9685Pin.PWM_01, "Motor1 InA" ), gpio.provisionPwmOutputPin( gpioProvider, PCA9685Pin.PWM_02, "Motor1 InB" ), gpio.provisionPwmOutputPin( gpioProvider, PCA9685Pin.PWM_03, "Unused" ), gpio.provisionPwmOutputPin( gpioProvider, PCA9685Pin.PWM_04, "Unused" ), gpio.provisionPwmOutputPin( gpioProvider, PCA9685Pin.PWM_05, "Unused" ), gpio.provisionPwmOutputPin( gpioProvider, PCA9685Pin.PWM_06, "Unused" ), gpio.provisionPwmOutputPin( gpioProvider, PCA9685Pin.PWM_07, "Unused" ), gpio.provisionPwmOutputPin( gpioProvider, PCA9685Pin.PWM_08, "Unused" ), gpio.provisionPwmOutputPin( gpioProvider, PCA9685Pin.PWM_09, "Unused" ), gpio.provisionPwmOutputPin( gpioProvider, PCA9685Pin.PWM_10, "Unused" ), gpio.provisionPwmOutputPin( gpioProvider, PCA9685Pin.PWM_11, "Unused" ), gpio.provisionPwmOutputPin( gpioProvider, PCA9685Pin.PWM_12, "Unused" ), gpio.provisionPwmOutputPin( gpioProvider, PCA9685Pin.PWM_13, "Unused" ), gpio.provisionPwmOutputPin( gpioProvider, PCA9685Pin.PWM_14, "Unused" ), gpio.provisionPwmOutputPin( gpioProvider, PCA9685Pin.PWM_15, "Unused" ) };
+		GpioPinPwmOutput myOutputs[] = { 
+				gpio.provisionPwmOutputPin(gpioProvider, PCA9685Pin.PWM_00, "Available"),
+				gpio.provisionPwmOutputPin(gpioProvider, PCA9685Pin.PWM_01, "Available"),
+				gpio.provisionPwmOutputPin(gpioProvider, PCA9685Pin.PWM_02, "Available"),
+				gpio.provisionPwmOutputPin(gpioProvider, PCA9685Pin.PWM_03, "Available"),
+				gpio.provisionPwmOutputPin(gpioProvider, PCA9685Pin.PWM_04, "Available"),
+				gpio.provisionPwmOutputPin(gpioProvider, PCA9685Pin.PWM_05, "Available"),
+				gpio.provisionPwmOutputPin(gpioProvider, PCA9685Pin.PWM_06, "Available"),
+				gpio.provisionPwmOutputPin(gpioProvider, PCA9685Pin.PWM_07, "Available"),
+				gpio.provisionPwmOutputPin(gpioProvider, PCA9685Pin.PWM_08, "Available"),
+				gpio.provisionPwmOutputPin(gpioProvider, PCA9685Pin.PWM_09, "Available"),
+				gpio.provisionPwmOutputPin(gpioProvider, PCA9685Pin.PWM_10, "Available"),
+				gpio.provisionPwmOutputPin(gpioProvider, PCA9685Pin.PWM_11, "Available"),
+				gpio.provisionPwmOutputPin(gpioProvider, PCA9685Pin.PWM_12, "Available"),
+				gpio.provisionPwmOutputPin(gpioProvider, PCA9685Pin.PWM_13, "Available"),
+				gpio.provisionPwmOutputPin(gpioProvider, PCA9685Pin.PWM_14, "Available"),
+				gpio.provisionPwmOutputPin(gpioProvider, PCA9685Pin.PWM_15, "Available" ) };
         return myOutputs;
-    }
-
-    public Motor getPwmMotor( String name, int pwm, int inA, int inB ) {
-        return new PwmMotorImpl( name, this.getPwmDevice( pwm ), this.getDigitalOutputDevice( inA ), this.getDigitalOutputDevice( inB ) );
     }
 
     @Override

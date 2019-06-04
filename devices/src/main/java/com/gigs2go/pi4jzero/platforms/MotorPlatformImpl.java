@@ -19,36 +19,45 @@ public class MotorPlatformImpl implements MotorPlatform {
     private final int maxSpeed;
     private int speed = 0;
 
-    public MotorPlatformImpl( DeviceProvider controller, MotorProvider mp1, MotorProvider mp2 ) {
-        // Get Motors
-        DigitalOutputDevice enableMp1 = controller.getDigitalOutputDevice( 3 );
-        mp1.setEnable( enableMp1 );
+    public MotorPlatformImpl(Motor flMotor, Motor frMotor, Motor rlMotor, Motor rrMotor, int maxSpeed) {
+		super();
+		this.flMotor = flMotor;
+		this.frMotor = frMotor;
+		this.rlMotor = rlMotor;
+		this.rrMotor = rrMotor;
+		this.maxSpeed = maxSpeed;
+	}
 
-        PwmDevice pwm = controller.getPwmDevice( 0 );
-    	this.maxSpeed = pwm.getFullSpeed(); // Capture this here. TODO ...
-
-        DigitalOutputDevice inA = controller.getDigitalOutputDevice( 1 );
-        DigitalOutputDevice inB = controller.getDigitalOutputDevice( 2 );
-        frMotor = mp1.createPwmMotor( "FrontRight", pwm, inA, inB );
-
-        pwm = controller.getPwmDevice( 4 );
-        inA = controller.getDigitalOutputDevice( 6 );
-        inB = controller.getDigitalOutputDevice( 5 );
-        rrMotor = mp1.createPwmMotor( "Rear Right", pwm, inA, inB );
-
-        DigitalOutputDevice enableMp2 = controller.getDigitalOutputDevice( 11 );
-        mp2.setEnable( enableMp2 );
-
-        pwm = controller.getPwmDevice( 8 );
-        inA = controller.getDigitalOutputDevice( 9 );
-        inB = controller.getDigitalOutputDevice( 10 );
-        flMotor = mp2.createPwmMotor( "Front Left", pwm, inA, inB );
-
-        pwm = controller.getPwmDevice( 12 );
-        inA = controller.getDigitalOutputDevice( 14 );
-        inB = controller.getDigitalOutputDevice( 13 );
-        rlMotor = mp2.createPwmMotor( "Rear Left", pwm, inA, inB );
-    }
+//	public MotorPlatformImpl( DeviceProvider controller, MotorProvider mp1, MotorProvider mp2 ) {
+//        // Get Motors
+//        DigitalOutputDevice enableMp1 = controller.getDigitalOutputDevice( 3 );
+//        mp1.setEnable( enableMp1 );
+//
+//        PwmDevice pwm = controller.getPwmDevice( 0 );
+//    	this.maxSpeed = pwm.getFullSpeed(); // Capture this here. TODO ...
+//
+//        DigitalOutputDevice inA = controller.getDigitalOutputDevice( 1 );
+//        DigitalOutputDevice inB = controller.getDigitalOutputDevice( 2 );
+//        frMotor = mp1.createPwmMotor( "FrontRight", pwm, inA, inB );
+//
+//        pwm = controller.getPwmDevice( 4 );
+//        inA = controller.getDigitalOutputDevice( 6 );
+//        inB = controller.getDigitalOutputDevice( 5 );
+//        rrMotor = mp1.createPwmMotor( "Rear Right", pwm, inA, inB );
+//
+//        DigitalOutputDevice enableMp2 = controller.getDigitalOutputDevice( 11 );
+//        mp2.setEnable( enableMp2 );
+//
+//        pwm = controller.getPwmDevice( 8 );
+//        inA = controller.getDigitalOutputDevice( 9 );
+//        inB = controller.getDigitalOutputDevice( 10 );
+//        flMotor = mp2.createPwmMotor( "Front Left", pwm, inA, inB );
+//
+//        pwm = controller.getPwmDevice( 12 );
+//        inA = controller.getDigitalOutputDevice( 14 );
+//        inB = controller.getDigitalOutputDevice( 13 );
+//        rlMotor = mp2.createPwmMotor( "Rear Left", pwm, inA, inB );
+//    }
 
     @Override
     public void forward( int value ) {

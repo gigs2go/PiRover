@@ -1,5 +1,7 @@
 package com.gigs2go.pi4jzero.web.controller;
 
+import java.util.Properties;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +36,16 @@ public abstract class PlatformController {
 
 	protected void setPlatform(MotorPlatform motorPlatform) {
 		this.platform = motorPlatform;
+	}
+
+	protected Properties loadProperties() {
+		Properties props = new Properties();
+		try {
+			props.load(this.getClass().getClassLoader().getResourceAsStream("config.properties"));
+		} catch (Exception e) {
+			LOG.error("No properties", e);
+		}
+		return props;
 	}
 
 	public String stop() {

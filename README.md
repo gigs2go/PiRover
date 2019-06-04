@@ -24,8 +24,17 @@ simple to use/code different components.
 I have included links to the adafruit versions of these, but there are many options, and cheaper
 sources ...
 
+The stack goes :
+Nginx ----> Static files for web page
+       |--> UV4L streaming server
+       |--> Rover web server
+Where Nginx is used as a reverse proxy to the 2 servers.
+
+TThe Rover web server is a simple, synchronous socket handler, which responds to certain requests
+by routing them to the controller.
+
 ### Software technologies
-1. [Spring Boot](https://spring.io/projects/spring-boot) Web
+1. Java
 2. [Pi4J](https://pi4j.com/1.2/index.html)
 
 ### Hardware platform :

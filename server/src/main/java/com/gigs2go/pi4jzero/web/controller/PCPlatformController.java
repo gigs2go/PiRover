@@ -1,5 +1,7 @@
 package com.gigs2go.pi4jzero.web.controller;
 
+import java.util.Properties;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +11,9 @@ public class PCPlatformController extends PlatformController {
     private static final Logger LOG = LoggerFactory.getLogger( PCPlatformController.class );
 	@Override
 	public void initialise() {
+		LOG.info( "Loading");
+		Properties props = loadProperties();
+		LOG.debug( props.toString() );
         super.setPlatform( new MotorPlatform() {
 
             @Override
@@ -53,9 +58,5 @@ public class PCPlatformController extends PlatformController {
 			}
 
         } );
-    }
-    
-    public void onExit() {
-      LOG.info("### PCRover Stopping ###");
     }
 }
