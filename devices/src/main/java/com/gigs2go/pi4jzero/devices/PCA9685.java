@@ -1,8 +1,10 @@
 package com.gigs2go.pi4jzero.devices;
 
+/**
+ * Map from the API to the Pi4J implementation classes.
+ */
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Arrays;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import com.gigs2go.pi4jzero.api.DeviceProvider;
 import com.gigs2go.pi4jzero.api.DigitalOutputDevice;
 import com.gigs2go.pi4jzero.api.Motor;
-import com.gigs2go.pi4jzero.api.MotorProvider;
 import com.gigs2go.pi4jzero.api.PwmDevice;
 import com.pi4j.gpio.extension.pca.PCA9685GpioProvider;
 import com.pi4j.gpio.extension.pca.PCA9685Pin;
@@ -23,12 +24,19 @@ import com.pi4j.io.i2c.I2CFactory.UnsupportedBusNumberException;
 
 public class PCA9685 implements DeviceProvider {
     private static final Logger LOG = LoggerFactory.getLogger( PCA9685.class );
+    private static final int MAX_VALUE = 4096;
     private I2CBus bus = null;
     private GpioPinPwmOutput[] outputChannels;
     private PCA9685GpioProvider provider;
     private int address;
     private int frequency;
 
+    /**
+     * 
+     * @param address
+     * @param frequency
+     * @throws IOException
+     */
     public PCA9685( int address, int frequency ) throws IOException {
         try {
             bus = I2CFactory.getInstance( I2CBus.BUS_1 );
@@ -47,16 +55,14 @@ public class PCA9685 implements DeviceProvider {
         provider.reset();
     }
     
-//    public MotorProvider getDualPwmMotorProvider( int enable ) {
-//        return new DualPwmMotorImpl( this, enable );
-//    }
-
+    @Override
     public DigitalOutputDevice getDigitalOutputDevice( int channel ) {
         return new PCA9685DigitalOutputDeviceImpl( provider, outputChannels[channel] );
     }
 
+    @Override
     public PwmDevice getPwmDevice( int channel ) {
-        return new PCA9685PwmDeviceImpl( provider, outputChannels[channel] );
+        return new PCA9685PwmDeviceImpl( provider, outputChannels[channel], MAX_VALUE );
     }
     
     private static GpioPinPwmOutput[] provisionPwmOutputs( final PCA9685GpioProvider gpioProvider ) {

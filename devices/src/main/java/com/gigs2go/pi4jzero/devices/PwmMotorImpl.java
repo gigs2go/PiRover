@@ -9,19 +9,21 @@ import com.gigs2go.pi4jzero.api.PwmDevice;
 
 public class PwmMotorImpl implements Motor {
     private static final Logger LOG = LoggerFactory.getLogger( PwmMotorImpl.class );
-    private PwmDevice pwm;
-    private DigitalOutputDevice inA;
-    private DigitalOutputDevice inB;
+    private final PwmDevice pwm;
+    private final DigitalOutputDevice inA;
+    private final DigitalOutputDevice inB;
+    private final String name;
+    private final int range;
     private boolean forwards = false;
     private boolean backwards = false;
     private int value = 0;
-    private String name = "";
 
     PwmMotorImpl( String name, PwmDevice pwm, DigitalOutputDevice inA, DigitalOutputDevice inB ) {
         this.name = name;
         this.pwm = pwm;
         this.inA = inA;
         this.inB = inB;
+        this.range = pwm.getFullSpeed();
     }
 
     @Override
@@ -51,8 +53,13 @@ public class PwmMotorImpl implements Motor {
         LOG.debug( "Motor {} Full", name );
         // Set pwm to on
         pwm.on();
-        value = Motor.MAX_SPEED;
+        value = this.range;
     }
+
+	@Override
+	public int getFullSpeed() {
+		return range;
+	}
 
     private void setForwards( int value ) {
         if ( !forwards ) {
@@ -81,8 +88,8 @@ public class PwmMotorImpl implements Motor {
         } else if ( value == 0 ) {
             LOG.info( "Value was '{}' - stopping", value );
             stop();
-        } else if ( value > 4095 ) {
-            LOG.info( "Value was > 4095 ('{}') - going to full", value );
+        } else if ( value >= this.range ) {
+            LOG.info( "Value was > {} ('{}') - going to full", this.range, value );
             full();
         } else {
             LOG.debug( "Setting? '{}' == '{}'", this.value, value );
@@ -98,5 +105,4 @@ public class PwmMotorImpl implements Motor {
     public String toString() {
         return "PwmMotorImpl [name=" + name + ", pwm=" + pwm + ", inA=" + inA + ", inB=" + inB + ", forwards=" + forwards + ", backwards=" + backwards + ", value=" + value + "]";
     }
-
 }

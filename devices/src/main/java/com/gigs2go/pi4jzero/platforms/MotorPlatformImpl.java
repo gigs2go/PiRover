@@ -12,12 +12,12 @@ import com.gigs2go.pi4jzero.api.PwmDevice;
 
 public class MotorPlatformImpl implements MotorPlatform {
     private static final Logger LOG = LoggerFactory.getLogger( MotorPlatformImpl.class );
-    private Motor flMotor;
-    private Motor frMotor;
-    private Motor rlMotor;
-    private Motor rrMotor;
-    //private boolean backwards = false;
-    private int speed = 0; // Motor.MAX_SPEED => Motor.MAX_SPEED
+    private final Motor flMotor;
+    private final Motor frMotor;
+    private final Motor rlMotor;
+    private final Motor rrMotor;
+    private final int maxSpeed;
+    private int speed = 0;
 
     public MotorPlatformImpl( DeviceProvider controller, MotorProvider mp1, MotorProvider mp2 ) {
         // Get Motors
@@ -25,6 +25,8 @@ public class MotorPlatformImpl implements MotorPlatform {
         mp1.setEnable( enableMp1 );
 
         PwmDevice pwm = controller.getPwmDevice( 0 );
+    	this.maxSpeed = pwm.getFullSpeed(); // Capture this here. TODO ...
+
         DigitalOutputDevice inA = controller.getDigitalOutputDevice( 1 );
         DigitalOutputDevice inB = controller.getDigitalOutputDevice( 2 );
         frMotor = mp1.createPwmMotor( "FrontRight", pwm, inA, inB );
@@ -90,12 +92,12 @@ public class MotorPlatformImpl implements MotorPlatform {
 
     private int[] splitSteer( int steer ) {
         int[] result = new int[2];
-        if ( (speed + steer) > Motor.MAX_SPEED ) {
-            result[0] = Motor.MAX_SPEED;
-            result[1] = Motor.MAX_SPEED - (2 * steer);
-        } else if ( (speed - steer) < -Motor.MAX_SPEED ) {
-            result[0] = -Motor.MAX_SPEED + (2 * steer);
-            result[1] = -Motor.MAX_SPEED;
+        if ( (speed + steer) > maxSpeed ) {
+            result[0] = maxSpeed;
+            result[1] = maxSpeed - (2 * steer);
+        } else if ( (speed - steer) < -maxSpeed ) {
+            result[0] = -maxSpeed + (2 * steer);
+            result[1] = -maxSpeed;
         } else {
             result[0] = speed + steer;
             result[1] = speed - steer;
@@ -135,10 +137,15 @@ public class MotorPlatformImpl implements MotorPlatform {
     @Override
     public void full() {
         LOG.debug( "Platform - full" );
-        speed = Motor.MAX_SPEED;
+        speed = maxSpeed;
         flMotor.full();
         frMotor.full();
         rlMotor.full();
         rrMotor.full();
     }
+
+	@Override
+	public int getFullSpeed() {
+		return maxSpeed;
+	}
 }

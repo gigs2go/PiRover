@@ -20,8 +20,8 @@ ssh pi@xxx.xxx.xxx.xxx
 
 # Then ..
 sudo bash
-apt-get update
-apt-get upgrade
+apt-get -y update
+apt-get -y upgrade
 # NB Do NOT use 'apt-get dist-upgrade'
 
 # Initial config
@@ -60,9 +60,20 @@ systemctl start uv4l_raspicam
 # Check that UV4L is running correctly
 # http://xxx.xxx.xxx.xxx:8099
 
+-------------------------------- Java etc ---------------------------------------
 # Install Java (and any other required packages)
 apt-get -y install openjdk-8-jre
 java -version
+
+-------------------------------------------------------------
+# Python 3 package manager and default
+apt-get install -y python3-pip
+update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
+update-alternatives --install /usr/bin/python python /usr/bin/python3.5 2
+apt-get install nginx
+pip3 install cherrypy
+
+-----------------------------------------------------------
 apt-get -y install -y i2c-tools
 i2cdetect -y 1
 apt-get -y install wiringpi

@@ -32,7 +32,7 @@ sources ...
 1. Pi ZeroW
 2. [Powerboost 1000C](https://www.adafruit.com/product/2465)
 3. [PCA9685 PWM Controller](https://www.adafruit.com/product/815)
-4. [TB6612](https://www.adafruit.com/product/2448) Motor Controller x 2
+4. [TB6612FNG](https://www.adafruit.com/product/2448) Motor Controller x 2
 5. [Pi Camera](https://thepihut.com/collections/raspberry-pi-camera/products/raspberry-pi-camera-module)
 6. LiPo battery (3.7V)
 7. 7.2V -> 8.4V battery pack (or whatever voltage is handled by the chosen motor controller)

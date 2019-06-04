@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import com.gigs2go.pi4jzero.api.DigitalOutputDevice;
 import com.pi4j.gpio.extension.pca.PCA9685GpioProvider;
-import com.pi4j.gpio.extension.pca.PCA9685Pin;
 import com.pi4j.io.gpio.GpioPinPwmOutput;
 
 public class PCA9685DigitalOutputDeviceImpl implements DigitalOutputDevice {
