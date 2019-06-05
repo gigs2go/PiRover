@@ -7,8 +7,8 @@ country=GB
 ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 update_config=1
 network={
-       ssid="TALKTALKABE6CC"
-       psk="WRFFU7DN"
+       ssid="RouterSSID"
+       psk="RouterPassword"
        key_mgmt=WPA-PSK
     }
 	
@@ -20,20 +20,35 @@ ssh pi@xxx.xxx.xxx.xxx
 
 # Then ..
 sudo bash
-apt-get -y update
-apt-get -y upgrade
-# NB Do NOT use 'apt-get dist-upgrade'
 
-# Initial config
-raspi-config
-# Change password and enable camera & i2c
-
-# Install UV4L
+# Install UV4L update repository
 curl http://www.linux-projects.org/listing/uv4l_repo/lpkey.asc | apt-key add -
 echo 'deb http://www.linux-projects.org/listing/uv4l_repo/raspbian/stretch stretch main' > /etc/apt/sources.list.d/uv4l.list
 
-apt-get update
+# Initial config
+raspi-config
+# Update. 
+# Change password, enable camera & i2c
+# NB Can extend Filesystem here, or wait until done
 
+apt-get -y update # This may have already been done by the rapsi-config above.
+apt-get -y upgrade
+# NB Do NOT use 'apt-get dist-upgrade'
+
+# Shutdown
+# For best results, ensure Camera and I2C devices are physically attached
+# Start
+
+# Basic system setup
+apt-get -y install -y i2c-tools
+i2cdetect -y 1
+
+apt-get -y install wiringpi
+
+apt-get -y install openjdk-8-jre
+java -version
+
+# Install UV4L
 apt-get -y install uv4l uv4l-raspicam
 apt-get -y install uv4l-server
 apt-get -y install uv4l-webrtc-armv6
@@ -61,17 +76,7 @@ systemctl start uv4l_raspicam
 # http://xxx.xxx.xxx.xxx:8099
 
 --------------- Nginx -----------------
-apt-get install nginx
-
------------ tools -----------------
-apt-get -y install -y i2c-tools
-i2cdetect -y 1
--------------------------------- Java etc ---------------------------------------
-# Install Java and wiring-pi
-apt-get -y install openjdk-8-jre
-java -version
-
-apt-get -y install wiringpi
+apt-get -y install nginx
 
 -------------------------- Python (not used) ----------------------------
 # Python 3 package manager and default

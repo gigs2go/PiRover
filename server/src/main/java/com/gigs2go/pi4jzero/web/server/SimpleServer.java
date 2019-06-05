@@ -35,8 +35,8 @@ public class SimpleServer {
 				controller = new Integer(args[0]);
 				LOG.info("Using Controller : '{}'", controller);
 			}
-			server.initialise( controller );
-			server.listen(8725);
+			server.initialise(controller);
+			server.listen(8090);
 		} catch (Exception e) {
 			LOG.error("Failed", e);
 		}
@@ -57,6 +57,7 @@ public class SimpleServer {
 		boolean doContinue = true;
 		while (doContinue) {
 			try {
+				LOG.info("Listening on port {}", port);
 				socket = serverSocket.accept(); // Blocks
 				boolean ok = handleRequest(socket);
 				handleResponse(socket, ok);
@@ -87,6 +88,7 @@ public class SimpleServer {
 		if (firstLine != null) {
 			String[] commandElements = getCommand(firstLine.split(" ")[1]);
 			if (commandElements != null) {
+				LOG.info("Handling ... '{}', '{}'", commandElements[0], commandElements[1]);
 				controller.handle(commandElements[0], commandElements[1]);
 				result = true;
 			}
@@ -95,7 +97,7 @@ public class SimpleServer {
 	}
 
 	private void handleResponse(Socket socket, boolean ok) throws UnsupportedEncodingException, IOException {
-		LOG.debug("Handling Response");
+		LOG.debug("Handling Response : OK is {}", ok);
 		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 		if (ok) {
 			writer.write("HTTP/1.1 200 Done it!\n");
@@ -122,10 +124,7 @@ public class SimpleServer {
 			// Command
 			String[] path = uri.getPath().split("/");
 			// Must be ours ...
-			if (!(path[1].equals("rover") && path.length == 4)) {
-				throw new Exception("Invalid Path : " + uri.getPath());
-			}
-			if (!path[2].equals("platform")) {
+			if (!(path[1].equals("platform") && path[2].equals("rover") && path.length == 4)) {
 				throw new Exception("Invalid Path : " + uri.getPath());
 			}
 			result[0] = path[3];
@@ -146,10 +145,10 @@ public class SimpleServer {
 					Integer.valueOf(result[1]);
 				}
 			} else if (!result[0].equals("stop") && !result[0].equals("center")) {
-				throw new Exception("Invalid Params : " + uri.getPath());
+				throw new Exception("Invalid Command : " + result[0]);
 			}
 		} catch (Exception e) {
-			// e.printStackTrace();
+			LOG.info("Command error", e );
 			result = null;
 		}
 		return result;
