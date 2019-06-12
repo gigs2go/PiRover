@@ -1,0 +1,13 @@
+[Unit]
+Description=Rover service
+After=network.target
+StartLimitIntervalSec=0
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=pi
+ExecStart=/usr/bin/java -jar /home/pi/rover/pz-server-1.0.0-SNAPSHOT-jar-with-dependencies.jar 0
+
+[Install]
+WantedBy=multi-user.target

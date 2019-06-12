@@ -38,6 +38,7 @@ apt-get -y upgrade
 # Shutdown
 # For best results, ensure Camera and I2C devices are physically attached
 # Start
+sudo bash
 
 # Basic system setup
 apt-get -y install -y i2c-tools
@@ -75,21 +76,62 @@ systemctl start uv4l_raspicam
 # Check that UV4L is running correctly
 # http://xxx.xxx.xxx.xxx:8099
 
---------------- Nginx -----------------
+#--------------- Nginx -----------------
 apt-get -y install nginx
 
--------------------------- Python (not used) ----------------------------
-# Python 3 package manager and default
-apt-get install -y python3-pip
-update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
-update-alternatives --install /usr/bin/python python /usr/bin/python3.5 2
-pip3 install cherrypy
+# Check
+wget localhost # creates index.html
 
+# copy rover to /etc/nginx/sites-available and modify links in /etc/nginx/sites-enabled
+# copy web content to /var/www/html
+systemctl restart nginx
+
+----------------- Service ----------------
+#start/check/enable service
+# Useful commands :
+systemctl start rover
+systemctl status rover
+systemctl stop rover
+systemctl enable rover
+journalctl -u rover
+
+# Set up the Rover service
+# Modify the rover.service file to suit (check contents - specifies full command to run pz-server)
+# Copy SystemD files to appropriate places 
+
+# Run systemctl daemon-reload
+# Start the service
+systemctl start rover
+# Watch it start
+journalctl -f # This is the equivalent of 'tail -f' of the log file ... it will also show system messages
+
+# Optional ...
+# Mod the logging configuration
+# Lines below cause all logging to be in-memory only
+# Supporting (log) files in /run/log/journal/
+# Edit /etc/systemd/journald.conf
+# Replace following lines (modify as required)
+Storage=volatile
+RuntimeMaxUse=20M
+RuntimeMaxFileSize=1M
+RuntimeMaxFiles=9
+
+# Re-read logging config
+systemctl restart systemd-journald
+# Check settings
+journalctl -u systemd-journald
+
+-------------------------------------------------------------------------
+Once here, backup the image.
+After the next steps, the pi will no longer be connected to the Router.
+This means (at best) no internet, no updates.
 -------------------------------------------------------------------------
 
 #
 # Set up as DHCP server with static IP
 # After this, the Pi will no longer be connected to the internet via the Router
+# Do ALL of these steps in one session!
+# 
 # Access point install
 apt-get -y install hostapd
 apt-get -y install dnsmasq
@@ -105,7 +147,7 @@ static domain_name_servers=192.168.1.1
 nohook wpa_supplicant
 denyinterfaces wlan0 
 
-# Create new /etc/dnsmasq.conf
+# Create /etc/dnsmasq.conf
 mv /etc/dnsmasq.conf /etc/dnsmasq.conf.orig
 # Add
 interface=wlan0
@@ -141,35 +183,6 @@ systemctl enable dnsmasq
 # Connect directly to the WiFi configured above
 # Login as before, but using the configured IP address
 
-# Finally, the application ...
-
-# Copy the webapp jar to pi home directory
-
-# Set up the PiRover service
-# Modify the pirover.service to suit
-# Copy pirover.service to /etc/systemd/system/pirover.service
-
-# Run systemctl daemon-reload
-# Start the service
-systemctl start pirover
-# Watch it start - it's slow
-journalctl -f # This is the equivalent of 'tail -f' of the log file ... it will also show system messages
-
-# Optional ...
-# Mod the logging configuration
-# Lines below cause all logging to be in-memory only
-# Supporting (log) files in /run/log/journal/
-# Edit /etc/systemd/journald.conf
-# Replace following lines (modify as required)
-Storage=volatile
-RuntimeMaxUse=20M
-RuntimeMaxFileSize=1M
-RuntimeMaxFiles=9
-
-# Re-read logging config
-systemctl restart systemd-journald
-# Check settings
-journalctl -u systemd-journald
 
 
 
